@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\IAndOthers.Domain\IAndOthers.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Cache\Enumerations\" />
+    <Folder Include="User\Enumerations\" />
+    <Folder Include="User\Interfaces\" />
+    <Folder Include="Authentication\Enumerations\" />
+  </ItemGroup>
+
+</Project>
