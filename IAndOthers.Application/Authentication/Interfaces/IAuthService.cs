@@ -7,6 +7,7 @@ namespace IAndOthers.Application.Authentication.Interfaces
     {
         Task<IOResult<AuthResponseDto>> RegisterAsync(RegisterModel model);
         Task<IOResult<AuthResponseDto>> LoginAsync(LoginModel model);
+        Task<IOResult<string>> SignOutAsync();
         Task<IOResult<AuthResponseDto>> RefreshTokenAsync(string refreshToken);
         Task<IOResult<string>> ForgotPasswordAsync(ForgotPasswordModel model);
         Task<IOResult<string>> ResetPasswordAsync(ResetPasswordModel model);

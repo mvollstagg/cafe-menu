@@ -112,6 +112,12 @@ namespace IAndOthers.Infrastructure.Authentication
             }), "Login successful");
         }
 
+        public async Task<IOResult<string>> SignOutAsync()
+        {
+            await _signInManager.SignOutAsync();
+            return new IOResult<string>(IOResultStatusEnum.Success, "Sign out successful.");
+        }
+
         public async Task<IOResult<string>> ForgotPasswordAsync(ForgotPasswordModel model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);

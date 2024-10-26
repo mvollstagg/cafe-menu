@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IAndOthers.Consumer.DeleteG
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IAndOthers.Consumer.UpdateExchangeRates", "IAndOthers.Consumer\IAndOthers.Consumer.UpdateExchangeRates\IAndOthers.Consumer.UpdateExchangeRates.csproj", "{4E2727C5-EF3A-4E48-BD09-D9E2442420F2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IAndOthers.Admin", "IAndOthers.Admin\IAndOthers.Admin.csproj", "{4446575A-236E-4526-95E4-3AFB15C51266}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{4E2727C5-EF3A-4E48-BD09-D9E2442420F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E2727C5-EF3A-4E48-BD09-D9E2442420F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E2727C5-EF3A-4E48-BD09-D9E2442420F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4446575A-236E-4526-95E4-3AFB15C51266}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4446575A-236E-4526-95E4-3AFB15C51266}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4446575A-236E-4526-95E4-3AFB15C51266}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4446575A-236E-4526-95E4-3AFB15C51266}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -67,6 +73,7 @@ Global
 		{9E8276F6-8E84-4FE6-B185-7F754E300E53} = {AA0089FB-27B9-4D86-AE54-B366AA48A6D9}
 		{D21B3E29-F0ED-42DA-B04E-99A19D7CCD11} = {376EE744-D1D5-41BC-9B4C-C2B27FCF0484}
 		{4E2727C5-EF3A-4E48-BD09-D9E2442420F2} = {376EE744-D1D5-41BC-9B4C-C2B27FCF0484}
+		{4446575A-236E-4526-95E4-3AFB15C51266} = {AA0089FB-27B9-4D86-AE54-B366AA48A6D9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6D460A23-F066-4AA6-A7F0-69ED626217AB}

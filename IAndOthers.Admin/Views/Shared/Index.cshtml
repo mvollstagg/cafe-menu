@@ -1,0 +1,17 @@
+﻿@model IEnumerable<dynamic>
+
+<h2>@ViewData["Title"] List</h2>
+
+@Html.Partial("_Index", Model)
+
+<a asp-action="Create" class="btn btn-success">Add New</a>
+
+@section Scripts {
+    <script type="text/javascript">
+        function confirmDelete(id) {
+            if (confirm("Are you sure you want to delete this item?")) {
+                window.location.href = '@Url.Action("Delete")?id=' + id;
+            }
+        }
+    </script>
+}

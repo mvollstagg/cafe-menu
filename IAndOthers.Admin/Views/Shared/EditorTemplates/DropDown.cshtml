@@ -1,0 +1,36 @@
+﻿@using IAndOthers.Application.Category.Attributes
+@model object
+
+@{
+    // Get the property name from the current context
+    var propertyName = ViewData.ModelMetadata.PropertyName;
+
+    // Get the IODropDown attribute
+    var dropDownAttribute = ViewData.ModelMetadata.ContainerType?
+        .GetProperty(propertyName)?
+        .GetCustomAttributes(typeof(IODropDownAttribute), false)
+        .OfType<IODropDownAttribute>()
+        .FirstOrDefault();
+
+    // Get the select list from ViewData using the attribute's key
+    var selectList = dropDownAttribute != null && ViewData.ContainsKey(dropDownAttribute.ViewDataKey)
+        ? ViewData[dropDownAttribute.ViewDataKey] as IEnumerable<SelectListItem>
+        : Enumerable.Empty<SelectListItem>();
+
+    // If the current value exists, set it as selected
+    if (Model != null)
+    {
+        var currentValue = Model.ToString();
+        foreach (var item in selectList)
+        {
+            item.Selected = item.Value == currentValue;
+        }
+    }
+}
+
+@(Html.DropDownListFor(
+    m => m,
+    new SelectList(selectList, "Value", "Text", Model),
+    "-- Please Select --",
+    new { @class = "form-control" }
+))

@@ -10,15 +10,31 @@ namespace IAndOthers.Core.Helpers
         public static IEnumerable<Type> FindClassesTypeOf<T>()
         {
             var targetType = typeof(T);
+            var types = new List<Type>();
 
             // Get all loaded assemblies in the current AppDomain
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-            // Select all types from all assemblies that are assignable to T
-            var types = assemblies
-                .SelectMany(assembly => assembly.GetTypes())
-                .Where(type => targetType.IsAssignableFrom(type) && !type.IsAbstract && !type.IsInterface)
-                .ToList();
+            foreach (var assembly in assemblies)
+            {
+                try
+                {
+                    var assemblyTypes = assembly.GetTypes()
+                        .Where(type => targetType.IsAssignableFrom(type) && !type.IsAbstract && !type.IsInterface)
+                        .ToList();
+
+                    types.AddRange(assemblyTypes);
+                }
+                catch (ReflectionTypeLoadException ex)
+                {
+                    // Log or handle the exception gracefully
+                    Console.WriteLine($"Failed to load types from assembly {assembly.FullName}: {ex.Message}");
+                    foreach (var loaderException in ex.LoaderExceptions)
+                    {
+                        Console.WriteLine($"Loader exception: {loaderException.Message}");
+                    }
+                }
+            }
 
             return types;
         }

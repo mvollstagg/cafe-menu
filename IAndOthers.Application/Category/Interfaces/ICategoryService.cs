@@ -7,8 +7,8 @@ namespace IAndOthers.Application.Category.Interfaces
     {
         Task<IOResult<CategoryEntity>> GetCategoryAsync(long id);
         Task<IOResult<IList<CategoryEntity>>> GetAllCategoriesAsync();
-        Task<IOResultMetadata> AddCategoryAsync(CategoryEntity category, long userId);
-        Task<IOResultMetadata> UpdateCategoryAsync(CategoryEntity category, long userId);
-        Task<IOResultMetadata> DeleteCategoryAsync(long id, long userId);
+        Task<IOResultMetadata> AddCategoryAsync(CategoryEntity category);
+        Task<IOResultMetadata> UpdateCategoryAsync(CategoryEntity category);
+        Task<IOResultMetadata> DeleteCategoryAsync(long id);
     }
 }

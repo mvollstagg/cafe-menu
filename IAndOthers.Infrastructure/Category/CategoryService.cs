@@ -1,22 +1,10 @@
-﻿using IAndOthers.Application.Authentication.Interfaces;
-using IAndOthers.Application.Authentication.Models;
-using IAndOthers.Application.Category.Interfaces;
-using IAndOthers.Core.Configs;
+﻿using IAndOthers.Application.Category.Interfaces;
 using IAndOthers.Core.Data.Enumeration;
 using IAndOthers.Core.Data.Result;
 using IAndOthers.Core.Data.Services;
 using IAndOthers.Core.IoC;
 using IAndOthers.Domain.Entities;
 using IAndOthers.Infrastructure.Data;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace IAndOthers.Infrastructure.Authentication
 {
@@ -47,19 +35,44 @@ namespace IAndOthers.Infrastructure.Authentication
             return categories;
         }
 
-        public Task<IOResultMetadata> AddCategoryAsync(Category category, long userId)
+        public async Task<IOResultMetadata> AddCategoryAsync(Category category)
         {
-            throw new NotImplementedException();
+            if (category == null)
+            {
+                return new IOResultMetadata(IOResultStatusEnum.Error, "Category cannot be null.");
+            }
+
+            var result = await _categoryRepository.InsertAsync(category);
+            return result;
         }
 
-        public Task<IOResultMetadata> UpdateCategoryAsync(Category category, long userId)
+        public async Task<IOResultMetadata> UpdateCategoryAsync(Category category)
         {
-            throw new NotImplementedException();
+            if (category == null)
+            {
+                return new IOResultMetadata(IOResultStatusEnum.Error, "Category cannot be null.");
+            }
+
+            var existingCategory = await _categoryRepository.GetAsync(c => c.Id == category.Id);
+            if (existingCategory == null)
+            {
+                return new IOResultMetadata(IOResultStatusEnum.Error, "Category not found.");
+            }
+
+            var result = await _categoryRepository.UpdateAsync(category);
+            return result;
         }
 
-        public Task<IOResultMetadata> DeleteCategoryAsync(long id, long userId)
+        public async Task<IOResultMetadata> DeleteCategoryAsync(long id)
         {
-            throw new NotImplementedException();
+            var existingCategory = await _categoryRepository.GetAsync(c => c.Id == id);
+            if (existingCategory == null)
+            {
+                return new IOResultMetadata(IOResultStatusEnum.Error, "Category not found.");
+            }
+
+            var result = await _categoryRepository.DeleteAsync(id);
+            return result;
         }
     }
 }
