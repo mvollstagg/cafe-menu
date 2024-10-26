@@ -37,25 +37,25 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
-// Configure Jwt
-var jwtConfig = builder.Configuration.GetSection("JwtConfig").Get<JwtConfig>();
-builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection("JwtConfig"));
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = false,
-        ValidateAudience = false,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.Secret))
-    };
-});
+//// Configure Jwt
+//var jwtConfig = builder.Configuration.GetSection("JwtConfig").Get<JwtConfig>();
+//builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection("JwtConfig"));
+//builder.Services.AddAuthentication(options =>
+//{
+//    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+//    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+//})
+//.AddJwtBearer(options =>
+//{
+//    options.TokenValidationParameters = new TokenValidationParameters
+//    {
+//        ValidateIssuer = false,
+//        ValidateAudience = false,
+//        ValidateLifetime = true,
+//        ValidateIssuerSigningKey = true,
+//        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.Secret))
+//    };
+//});
 
 // Configure Smtp
 builder.Services.Configure<SmtpConfig>(builder.Configuration.GetSection("SmtpConfig"));
@@ -67,23 +67,23 @@ builder.Services.AddScoped(typeof(IIORepository<,>), typeof(IORepositoryBase<,>)
 // Add HttpContextAccessor
 builder.Services.AddHttpContextAccessor();
 // Redis Configuration
-builder.Services.Configure<RedisConfig>(builder.Configuration.GetSection("RedisConfig"));
-builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
-{
-    var redisConfig = sp.GetRequiredService<IOptions<RedisConfig>>().Value;
+//builder.Services.Configure<RedisConfig>(builder.Configuration.GetSection("RedisConfig"));
+//builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+//{
+//    var redisConfig = sp.GetRequiredService<IOptions<RedisConfig>>().Value;
 
-    var options = new ConfigurationOptions
-    {
-        EndPoints = { redisConfig.Host },
-        Password = redisConfig.Password,
-        User = redisConfig.User,
-        Ssl = redisConfig.Ssl,
-        SslHost = redisConfig.SslHost,
-        AbortOnConnectFail = redisConfig.AbortOnConnectFail
-    };
+//    var options = new ConfigurationOptions
+//    {
+//        EndPoints = { redisConfig.Host },
+//        Password = redisConfig.Password,
+//        User = redisConfig.User,
+//        Ssl = redisConfig.Ssl,
+//        SslHost = redisConfig.SslHost,
+//        AbortOnConnectFail = redisConfig.AbortOnConnectFail
+//    };
 
-    return ConnectionMultiplexer.Connect(options);
-});
+//    return ConnectionMultiplexer.Connect(options);
+//});
 
 // Configure RabbitMQ with MassTransit
 builder.Services.AddMassTransit(x =>
@@ -126,8 +126,8 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication();
-app.UseAuthorization();
+//app.UseAuthentication();
+//app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
