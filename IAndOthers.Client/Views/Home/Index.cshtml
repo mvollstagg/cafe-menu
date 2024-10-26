@@ -1,8 +1,108 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model IEnumerable<ProductViewModel>
+
+@{
+    ViewData["Title"] = "Products";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<h2>Products</h2>
+
+<div class="mb-3">
+    <input type="text" id="filterInput" class="form-control" placeholder="Filter by name..." onkeyup="filterProducts()" />
 </div>
+
+<table class="table" id="productTable">
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th onclick="sortProducts()">Name</th>
+            <th>Base Price</th>
+            <th>Price in EUR</th>
+            <th>Price in GBP</th>
+            <th>Price in USD</th>
+            <th>Details</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+                <td><img src="@product.ImageUrl" alt="Product Image" width="50" /></td>
+                <td>@product.ProductName</td>
+                <td>@product.BasePrice.ToString("C")</td>
+                <td>@product.PriceInEUR.ToString("C")</td>
+                <td>@product.PriceInGBP.ToString("C")</td>
+                <td>@product.PriceInUSD.ToString("C")</td>
+                <td>
+                    <button class="btn btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProperties-@product.Id" aria-expanded="false" aria-controls="collapseProperties-@product.Id">
+                        View Properties
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="7">
+                    <div class="collapse" id="collapseProperties-@product.Id">
+                        <div class="card card-body">
+                            @if (product.Properties.Any())
+                            {
+                                <ul class="list-group">
+                                    @foreach (var prop in product.Properties)
+                                    {
+                                        <li class="list-group-item">
+                                            <strong>@prop.Key:</strong> @prop.Value
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <p>No properties available</p>
+                            }
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        // Filter products by name
+        function filterProducts() {
+            var input = document.getElementById("filterInput");
+            var filter = input.value.toLowerCase();
+            var table = document.getElementById("productTable");
+            var rows = table.getElementsByTagName("tr");
+
+            for (var i = 1; i < rows.length; i += 2) { // Skip every second row as they are property rows
+                var nameCell = rows[i].getElementsByTagName("td")[1];
+                if (nameCell) {
+                    var name = nameCell.textContent || nameCell.innerText;
+                    rows[i].style.display = name.toLowerCase().indexOf(filter) > -1 ? "" : "none";
+                    rows[i + 1].style.display = rows[i].style.display; // Sync display with properties row
+                }
+            }
+        }
+
+        // Sort products by base price
+        function sortProducts() {
+            var table = document.getElementById("productTable");
+            var rows = Array.from(table.getElementsByTagName("tr")).slice(1); // Skip header row
+            var productRows = rows.filter((_, index) => index % 2 === 0); // Only sort main product rows
+
+            var sorted = productRows.sort(function (a, b) {
+                var priceA = parseFloat(a.getElementsByTagName("td")[2].textContent.replace(/[^0-9.-]+/g, ""));
+                var priceB = parseFloat(b.getElementsByTagName("td")[2].textContent.replace(/[^0-9.-]+/g, ""));
+                return priceA - priceB;
+            });
+
+            var tbody = table.getElementsByTagName("tbody")[0];
+            tbody.innerHTML = "";
+
+            sorted.forEach(function (row) {
+                tbody.appendChild(row);
+                tbody.appendChild(row.nextElementSibling); // Add property row along with product row
+            });
+        }
+    </script>
+}

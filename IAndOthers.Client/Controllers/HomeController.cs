@@ -1,32 +1,63 @@
 using IAndOthers.Client.Models;
+using IAndOthers.Core.Data.Services;
+using IAndOthers.Domain.Entities;
+using IAndOthers.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+using Microsoft.EntityFrameworkCore;
 
 namespace IAndOthers.Client.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly IIORepository<Product, ApplicationDbContext> _productRepository;
+        private readonly IIORepository<ExchangeRate, ApplicationDbContext> _exchangeRateRepository;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IIORepository<Product, ApplicationDbContext> productRepository, 
+                            IIORepository<ExchangeRate, ApplicationDbContext> exchangeRateRepository)
         {
-            _logger = logger;
+            _productRepository = productRepository;
+            _exchangeRateRepository = exchangeRateRepository;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
-        }
+            // Fetch the latest exchange rates for EUR, GBP, and USD
+            var exchangeRates = await _exchangeRateRepository
+                .Table
+                .Where(rate => rate.CurrencyCode == "EUR" || rate.CurrencyCode == "GBP" || rate.CurrencyCode == "USD")
+                .OrderByDescending(rate => rate.DateUtc)
+                .GroupBy(rate => rate.CurrencyCode)
+                .Select(g => g.FirstOrDefault())
+                .ToDictionaryAsync(rate => rate.CurrencyCode, rate => rate.SellingPrice);
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+            // Default to 1 if any currency rate is missing
+            decimal eurRate = exchangeRates.ContainsKey("EUR") ? exchangeRates["EUR"] : 1;
+            decimal gbpRate = exchangeRates.ContainsKey("GBP") ? exchangeRates["GBP"] : 1;
+            decimal usdRate = exchangeRates.ContainsKey("USD") ? exchangeRates["USD"] : 1;
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            // Fetch products and calculate prices in each currency, including properties
+            var products = await _productRepository
+                .Table
+                .Where(p => !p.Deleted)
+                .Include(p => p.ProductProperties)
+                .ThenInclude(pp => pp.Property)
+                .ToListAsync();
+
+            var productViewModels = products.Select(p => new ProductViewModel
+            {
+                Id = p.Id,
+                ImageUrl = "http://localhost:5292/" + p.ImagePath,
+                ProductName = p.ProductName,
+                BasePrice = p.Price,
+                PriceInEUR = p.Price * eurRate,
+                PriceInGBP = p.Price * gbpRate,
+                PriceInUSD = p.Price * usdRate,
+                Properties = p.ProductProperties
+                    .Select(pp => new KeyValuePair<string, string>(pp.Property.Key, pp.Property.Value))
+                    .ToList()
+            }).ToList();
+
+            return View(productViewModels);
         }
     }
 }
