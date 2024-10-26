@@ -1,0 +1,38 @@
+﻿@model IEnumerable<ProductViewModel>
+
+@{
+    ViewData["Title"] = ViewData["Title"] ?? "List";
+}
+
+<h2>@ViewData["Title"] List</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Category</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Image</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+                <td>@product.Id</td>
+                <td>@product.CategoryName</td>
+                <td>@product.ProductName</td>
+                <td>@product.Price</td>
+                <td>
+                    <img src="@Url.Content(product.ImagePath)" alt="@product.ProductName" class="img-thumbnail" style="width: 100px;" />
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@product.Id" class="btn btn-primary">Edit</a>
+                    <button type="button" class="btn btn-danger" onclick="confirmDelete(@product.Id)">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

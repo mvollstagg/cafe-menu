@@ -7,11 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Media\**" />
     <Compile Remove="User\**" />
-    <EmbeddedResource Remove="Media\**" />
     <EmbeddedResource Remove="User\**" />
-    <None Remove="Media\**" />
     <None Remove="User\**" />
   </ItemGroup>
 

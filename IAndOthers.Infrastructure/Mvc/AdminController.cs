@@ -6,10 +6,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Omu.ValueInjecter;
 
-public abstract class AdminController<TEntity, TCreateModel, TUpdateModel, TViewModel, TContext> : Controller
+public abstract class AdminController<TEntity, TCreateModel, TEditModel, TViewModel, TContext> : Controller
     where TEntity : class, IIOEntity, new()
     where TCreateModel : class, new()
-    where TUpdateModel : class, new()
+    where TEditModel : class, new()
     where TViewModel : class, new()
     where TContext : DbContext, new()
 {
@@ -48,10 +48,16 @@ public abstract class AdminController<TEntity, TCreateModel, TUpdateModel, TView
         }
 
         var entity = (TEntity)new TEntity().InjectFrom(model);
+        entity = await BeforeCreate(entity, model);
         var result = await _repository.InsertAsync(entity);
 
         if (result.Status != IOResultStatusEnum.Success) return View("Error");
         return RedirectToAction("Index");
+    }
+
+    public virtual async Task<TEntity> BeforeCreate(TEntity entity, TCreateModel model)
+    {
+        return entity;
     }
 
     public virtual async Task<IActionResult> Edit(long id)
@@ -59,7 +65,7 @@ public abstract class AdminController<TEntity, TCreateModel, TUpdateModel, TView
         var result = await _repository.GetAsync(x => x.Id == id);
         if (result.Meta.Status != IOResultStatusEnum.Success || result.Data == null) return NotFound();
 
-        var updateModel = (TUpdateModel)new TUpdateModel().InjectFrom(result.Data);
+        var updateModel = (TEditModel)new TEditModel().InjectFrom(result.Data);
 
         await SetListViewData(updateModel);
         ViewData["Title"] = typeof(TEntity).Name;
@@ -68,7 +74,7 @@ public abstract class AdminController<TEntity, TCreateModel, TUpdateModel, TView
     }
 
     [HttpPost]
-    public virtual async Task<IActionResult> Edit(TUpdateModel model)
+    public virtual async Task<IActionResult> Edit(TEditModel model)
     {
         if (!ModelState.IsValid)
         {
@@ -78,10 +84,16 @@ public abstract class AdminController<TEntity, TCreateModel, TUpdateModel, TView
         }
 
         var entity = (TEntity)new TEntity().InjectFrom(model);
+        entity = await BeforeEdit(entity, model);
         var result = await _repository.UpdateAsync(entity);
 
         if (result.Status != IOResultStatusEnum.Success) return View("Error");
         return RedirectToAction("Index");
+    }
+
+    public virtual async Task<TEntity> BeforeEdit(TEntity entity, TEditModel model)
+    {
+        return entity;
     }
 
     public virtual async Task<IActionResult> Delete(long id)

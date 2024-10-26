@@ -1,0 +1,104 @@
+﻿@model ProductEditModel
+@{
+    ViewData["Title"] = "Edit Product";
+}
+
+<h2>Edit Product</h2>
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="ImagePath" />
+
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="CategoryId" class="control-label"></label>
+                        @Html.EditorFor(m => m.CategoryId)
+                        <span asp-validation-for="CategoryId" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="ProductName" class="control-label"></label>
+                        <input asp-for="ProductName" class="form-control" />
+                        <span asp-validation-for="ProductName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="Price" class="control-label"></label>
+                        <input asp-for="Price" class="form-control" step="0.01" />
+                        <span asp-validation-for="Price" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="Media" class="control-label">Update Image (optional)</label>
+                        <input asp-for="Media" class="form-control" type="file" />
+                        <span asp-validation-for="Media" class="text-danger"></span>
+                        <div class="mt-2">
+                            @if (!string.IsNullOrEmpty(Model.ImagePath))
+                            {
+                                <img src="@Model.ImagePath" alt="Current Image" class="img-thumbnail" width="150" />
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="SelectedProductPropertyIds" class="control-label">Properties</label>
+                        <div class="border rounded p-3">
+                            @{
+                                var propertyList = ViewData["ProductPropertiesList"] as List<SelectListItem>;
+                                var selectedProperties = Model.SelectedProductPropertyIds ?? new List<long>();
+
+                                if (propertyList != null && propertyList.Any())
+                                {
+                                    foreach (var property in propertyList)
+                                    {
+                                        var isChecked = selectedProperties.Contains(long.Parse(property.Value));
+                                        <div class="form-check">
+                                            <input type="checkbox"
+                                                   class="form-check-input"
+                                                   name="SelectedProductPropertyIds"
+                                                   value="@property.Value"
+                                                   id="property_@property.Value"
+                                            @(isChecked ? "checked" : "") />
+                                            <label class="form-check-label" for="property_@property.Value">
+                                                @property.Text
+                                            </label>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="alert alert-info">
+                                        No properties available
+                                    </div>
+                                }
+                            }
+                        </div>
+                        <span asp-validation-for="SelectedProductPropertyIds" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,23 +1,17 @@
-using IAndOthers.Core.Middleware;
 using IAndOthers.Core.Configs;
 using IAndOthers.Core.IoC;
 using IAndOthers.Domain.Entities;
 using IAndOthers.Infrastructure.Data;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using StackExchange.Redis;
-using System.Text;
 using IAndOthers.Core.Data.Services;
 using Hangfire;
-using System.Transactions;
 using IAndOthers.Core.Jobs;
 using IAndOthers.Core.Helpers;
 using MassTransit;
 using IAndOthers.Core.MassTransit;
-using Hangfire.Dashboard;
+using Microsoft.AspNetCore.Localization;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -90,7 +84,7 @@ builder.Services.AddMassTransit(x =>
 {
     x.UsingRabbitMq((context, cfg) =>
     {
-        cfg.Host(builder.Configuration.GetConnectionString("RabbitMqConnection")); // RabbitMQ connection
+        cfg.Host(builder.Configuration.GetConnectionString("RabbitMqConnection"));
     });
 });
 // Add MassTransit hosted service
@@ -107,6 +101,15 @@ builder.Services.AddHangfireServer();
 
 var app = builder.Build();
 
+var defaultCulture = new CultureInfo("en-US");
+var localizationOptions = new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture(defaultCulture),
+    SupportedCultures = new List<CultureInfo> { defaultCulture },
+    SupportedUICultures = new List<CultureInfo> { defaultCulture }
+};
+app.UseRequestLocalization(localizationOptions);
+
 // Configure IBusControl after app starts
 MassTransitHelper.ConfigureBusControl(app.Services);
 
@@ -117,7 +120,6 @@ IODependencyResolver.SetServiceProvider(app.Services);
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -143,12 +145,10 @@ app.Run();
 // Method to find and register all IORecurringJob classes with Hangfire
 static void RegisterRecurringJobs(IServiceProvider services)
 {
-    // Use IOAssemblyHelper to find all classes inheriting from IORecurringJob
     var recurringJobTypes = IOAssemblyHelper.FindClassesTypeOf<IORecurringJob>();
 
     foreach (var jobType in recurringJobTypes)
     {
-        // Resolve job instance from DI if needed
         var jobInstance = (IORecurringJob)Activator.CreateInstance(jobType);
         RecurringJob.AddOrUpdate(jobInstance.Code, () => jobInstance.Execute(), jobInstance.Cron);
 

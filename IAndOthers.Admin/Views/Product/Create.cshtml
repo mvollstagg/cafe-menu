@@ -1,0 +1,92 @@
+﻿@model ProductCreateModel
+@{
+    ViewData["Title"] = "Create Product";
+}
+
+<h2>Create Product</h2>
+
+<form asp-action="Create" method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="CategoryId" class="control-label"></label>
+                        @Html.EditorFor(m => m.CategoryId)
+                        <span asp-validation-for="CategoryId" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="ProductName" class="control-label"></label>
+                        <input asp-for="ProductName" class="form-control" />
+                        <span asp-validation-for="ProductName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="Price" class="control-label"></label>
+                        <input asp-for="Price" class="form-control" step="0.01" />
+                        <span asp-validation-for="Price" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="Media" class="control-label"></label>
+                        <input asp-for="Media" class="form-control" type="file" />
+                        <span asp-validation-for="Media" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="SelectedProductPropertyIds" class="control-label">Properties</label>
+                        <div class="border rounded p-3">
+                            @{
+                                var propertyList = ViewData["ProductPropertiesList"] as List<SelectListItem>;
+                                if (propertyList != null && propertyList.Any())
+                                {
+                                    foreach (var property in propertyList)
+                                    {
+                                        <div class="form-check">
+                                            <input type="checkbox"
+                                                   class="form-check-input"
+                                                   name="SelectedProductPropertyIds"
+                                                   value="@property.Value"
+                                                   id="property_@property.Value" />
+                                            <label class="form-check-label" for="property_@property.Value">
+                                                @property.Text
+                                            </label>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="alert alert-info">
+                                        No properties available
+                                    </div>
+                                }
+                            }
+                        </div>
+                        <span asp-validation-for="SelectedProductPropertyIds" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Save
+                </button>
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
