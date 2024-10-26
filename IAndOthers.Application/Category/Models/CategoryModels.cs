@@ -1,4 +1,4 @@
-﻿using IAndOthers.Application.Category.Attributes;
+﻿using IAndOthers.Core.Mvc.Attributes;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;

@@ -1,4 +1,4 @@
-﻿namespace IAndOthers.Application.Category.Attributes
+﻿namespace IAndOthers.Core.Mvc.Attributes
 {
     [AttributeUsage(AttributeTargets.Property)]
     public class IODropDownAttribute : Attribute

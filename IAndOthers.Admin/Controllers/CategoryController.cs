@@ -30,6 +30,7 @@ namespace IAndOthers.Admin.Controllers
                                 })
                                 .ToListAsync();
 
+            ViewData["Title"] = typeof(Category).Name;
             return View("Index", result);
         }
 

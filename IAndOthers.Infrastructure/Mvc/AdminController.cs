@@ -22,6 +22,7 @@ public abstract class AdminController<TEntity, TCreateModel, TUpdateModel, TView
 
     public virtual async Task<IActionResult> Index()
     {
+        ViewData["Title"] = typeof(TEntity).Name;
         var result = await _repository.GetListAsync();
         if (result.Meta.Status != IOResultStatusEnum.Success) return View("Error");
 

@@ -1,0 +1,32 @@
+﻿@model IEnumerable<PropertyViewModel>
+
+@{
+    ViewData["Title"] = ViewData["Title"] ?? "List";
+}
+
+<h2>List @ViewData["Title"]</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Key</th>
+            <th>Value</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var property in Model)
+        {
+            <tr>
+                <td>@property.Id</td>
+                <td>@property.Key</td>
+                <td>@property.Value</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@property.Id" class="btn btn-primary">Edit</a>
+                    <button type="button" class="btn btn-danger" onclick="confirmDelete(@property.Id)">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
