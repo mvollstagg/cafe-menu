@@ -27,6 +27,7 @@ namespace IAndOthers.Infrastructure.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<Property> Properties { get; set; }
         public DbSet<ProductProperty> ProductProperties { get; set; }
+        public DbSet<ExchangeRate> ExchangeRates { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
